@@ -100,9 +100,9 @@ def draw_physical_memory(memory_frames):
         screen.blit(text, (start_x + 10, start_y + i * cell_height + 10))
 
 def draw_arrows():
-    pygame.draw.line(screen, BLACK, (200, 150), (250, 125), 2)  # CPU to Logical Address
-    pygame.draw.line(screen, BLACK, (550, 125), (600, 125), 2)  # Logical Address to Page Table
-    pygame.draw.line(screen, BLACK, (850, 125), (1000, 125), 2)  # Page Table to Physical Memory
+    pygame.draw.line(screen, BLACK, (200, 150), (250, 125), 2)  
+    pygame.draw.line(screen, BLACK, (550, 125), (600, 125), 2)  
+    pygame.draw.line(screen, BLACK, (850, 125), (1000, 125), 2)  
 
 def simulation_step(page_table, memory_frames, logical_address):
     page, offset = get_page_offset(logical_address)

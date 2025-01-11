@@ -30,7 +30,7 @@ def run_algorithm(file_path, page_sequence, time_delay, num_frames):
     Execute the algorithm located at the given file path using subprocess.
     """
     try:
-        # Pass the page sequence, time delay, and number of frames as command-line arguments
+       
         subprocess.run([
             "python", file_path,
             ",".join(map(str, page_sequence)),
@@ -73,14 +73,14 @@ def get_inputs():
             if event.type == pygame.KEYDOWN:
                 if active:
                     if event.key == pygame.K_RETURN:
-                        if prompt_index == 0:  # Page sequence
+                        if prompt_index == 0:  
                             try:
                                 results.append(list(map(int, user_text.split(","))))
                             except ValueError:
                                 print("Invalid input. Please enter numbers separated by commas.")
                                 user_text = ""
                                 continue
-                        else:  # Time delay and number of frames
+                        else: 
                             try:
                                 results.append(float(user_text) if prompt_index == 1 else int(user_text))
                             except ValueError:

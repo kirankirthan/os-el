@@ -2,111 +2,92 @@ import pygame
 import sys
 
 
-# Parse command-line arguments
-if len(sys.argv) > 3:  # Expecting page sequence, frame count, and delay
+if len(sys.argv) > 3:  
     try:
         page_sequence = list(map(int, sys.argv[1].split(",")))
         num_frames = int(sys.argv[2])
-        time_delay = int(sys.argv[3])  # Now this will work as expected
+        time_delay = int(sys.argv[3])  
     except ValueError:
         print("Invalid inputs. Ensure page sequence, frame count, and delay are valid.")
         sys.exit()
-# Rest of your code (e.g., initialization, simulation logic)
-# Initialize Pygame
+
 pygame.init()
 
-# Screen dimensions
 WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("MFU Demand Paging Simulation")
 
-# Colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 
-# Simulation settings
-frames = [None, None, None]  # Example with 3 memory frames
-# page_sequence = [1, 2, 3, 2, 4, 5, 1, 6, 3, 7]  # Reference string
+
+frames = [None] * num_frames
 page_faults = 0
 font = pygame.font.Font(None, 36)
 
-# Main loop
 def simulation():
     global frames, page_faults
     clock = pygame.time.Clock()
     current_page_index = 0
-    page_freq = {}  # Dictionary to track page access frequency
-    fault_indices = []  # To store the indices where page faults occurred
+    page_freq = {}  
+    fault_indices = []  
 
     while current_page_index < len(page_sequence):
         screen.fill(WHITE)
         page = page_sequence[current_page_index]
 
-        # Display the reference string text on one line
         ref_text_line1 = "Reference String:"
         ref_render_line1 = font.render(ref_text_line1, True, BLACK)
-        screen.blit(ref_render_line1, (50, 10))  # Position the first line at the top
+        screen.blit(ref_render_line1, (50, 10))  
 
-        # Display the sequence of numbers (ref_text) on the next line
         ref_text_line2 = " ".join(map(str, page_sequence))
         ref_render_line2 = font.render(" "+ref_text_line2, True, BLACK)
-        screen.blit(ref_render_line2, (50, 50))  # Position the second line below the first line
+        screen.blit(ref_render_line2, (50, 50))  
 
-        # Measure the width of each number in the reference string for alignment
-        text_width = font.size("0")[0]+6.8   # Approx. width of each character with spacing
-
-        # Update the frequency count for the current page
+       
+        text_width = font.size("0")[0]+6.8   
+        
         if page in page_freq:
             page_freq[page] += 1
         else:
             page_freq[page] = 1
 
-        # Check if page is already in memory
         if page not in frames:
             page_faults += 1
             fault_indices.append(current_page_index)
 
-            # If there's space, add the page to an empty frame
             if None in frames:
                 empty_index = frames.index(None)
                 frames[empty_index] = page
             else:
-                # If no space, replace the page with the highest frequency (MFU)
-                # Find the MFU page in memory (page with highest access count)
-                mfu_page = max(frames, key=lambda p: page_freq.get(p, 0))  # Find the MFU page
-                mfu_index = frames.index(mfu_page)  # Find index of the MFU page in memory
+                mfu_page = max(frames, key=lambda p: page_freq.get(p, 0))  
+                mfu_index = frames.index(mfu_page)  
 
-                # Replace the MFU page with the new page
                 frames[mfu_index] = page
 
-                # Reset the frequency of the replaced page to zero
                 page_freq[mfu_page] = 0
 
-        # Draw memory frames
         for i, frame in enumerate(frames):
             color = GREEN if frame == page else BLACK
             pygame.draw.rect(screen, color, (200, 100 + i * 100, 100, 50))
             text = font.render(str(frame) if frame else "-", True, WHITE)
             screen.blit(text, (225, 110 + i * 100))
 
-        # Display the current page being processed
         page_text = font.render(f"Current Page: {page}", True, RED)
         screen.blit(page_text, (400, 50))
 
-        # Display the total page faults
         fault_text = font.render(f"Page Faults: {page_faults}", True, BLACK)
         screen.blit(fault_text, (400, 100))
 
-        # Draw dots directly below the reference string for page faults
         for idx in fault_indices:
-            dot_x = 50 + (idx * 20) + 12  # Adjusted alignment for each number
-            dot_y = 80  # Slightly below the reference string
-            pygame.draw.circle(screen, RED, (dot_x, dot_y), 5)  # Draw a small red dot below
+            dot_x = 50 + (idx * 20) + 12  
+            dot_y = 80  
+            pygame.draw.circle(screen, RED, (dot_x, dot_y), 5) 
 
         pygame.display.flip()
-        pygame.time.wait(5000)  # Wait for 1 second before processing the next page
+        pygame.time.wait(5000) 
         current_page_index += 1
 
         for event in pygame.event.get():
@@ -114,5 +95,4 @@ def simulation():
                 pygame.quit()
                 sys.exit()
 
-# Run simulation
 simulation()
